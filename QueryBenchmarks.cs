@@ -9,16 +9,12 @@ namespace ORMShowdown_NET8
     public class QueryBenchmarks
     {
         private EFCoreDbContext _efContext = null!;
-        private DapperContext _dapperContext = null!;
-
         private Product _product = null!;
 
         [GlobalSetup]
         public void Setup()
         {
             _efContext = new();
-            _dapperContext = new();
-
             var randomNum = new Random().Next(1, 99);
             _product = _efContext.Products.First(x => x.Id == randomNum);
         }
@@ -26,21 +22,32 @@ namespace ORMShowdown_NET8
         [Benchmark]
         public async Task<Product?> EF_FirstOrDefault()
         {
-            var product = await _efContext.Products.FirstOrDefaultAsync(x => x.Id == _product.Id);
+            var context = new EFCoreDbContext();
+            var product = await context.Products.FirstOrDefaultAsync(x => x.Id == _product.Id);
+            return product;
+        }
+
+        [Benchmark]
+        public async Task<Product?> EF_AsNoTracking_FirstOrDefault()
+        {
+            var context = new EFCoreDbContext();
+            var product = await context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == _product.Id);
             return product;
         }
 
         [Benchmark]
         public async Task<ProductDto?> EF_SqlQuery_FirstOrDefault()
         {
-            var product = await _efContext.Database.SqlQueryRaw<ProductDto>($"SELECT * FROM Products WHERE Id = {_product.Id}").FirstOrDefaultAsync();
+            var context = new EFCoreDbContext();
+            var product = await context.Database.SqlQueryRaw<ProductDto>($"SELECT * FROM Products WHERE Id = {_product.Id}").FirstOrDefaultAsync();
             return product;
         }
 
         [Benchmark]
         public async Task<Product> Dapper_FirstOrDefault()
         {
-            var product = await _dapperContext.CreateConnection().QueryFirstOrDefaultAsync<Product>($"SELECT * FROM Products WHERE Id = {_product.Id}");
+            var context = new DapperContext();
+            var product = await context.CreateConnection().QueryFirstOrDefaultAsync<Product>($"SELECT * FROM Products WHERE Id = {_product.Id}");
             return product;
         }
     }

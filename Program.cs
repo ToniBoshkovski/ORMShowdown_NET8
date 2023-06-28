@@ -15,7 +15,7 @@ var config = new ManualConfig()
         .AddLogger(ConsoleLogger.Default)
         .AddColumnProvider(DefaultColumnProviders.Instance);
 
-//BenchmarkRunner.Run<QueryBenchmarks>(config);
+BenchmarkRunner.Run<QueryBenchmarks>(config);
 BenchmarkRunner.Run<QueryAllBenchmarks>(config);
 
 var app = builder.Build();
