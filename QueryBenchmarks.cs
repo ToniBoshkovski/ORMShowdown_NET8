@@ -24,16 +24,16 @@ namespace ORMShowdown_NET8
         }
 
         [Benchmark]
-        public async Task<Product?> EF__FirstOrDefault()
+        public async Task<Product?> EF_FirstOrDefault()
         {
             var product = await _efContext.Products.FirstOrDefaultAsync(x => x.Id == _product.Id);
             return product;
         }
 
         [Benchmark]
-        public async Task<Product?> EF_SqlQuery_FirstOrDefault()
+        public async Task<ProductDto?> EF_SqlQuery_FirstOrDefault()
         {
-            var product = await _efContext.Database.SqlQueryRaw<Product>($"SELECT * FROM Products WHERE Id = {_product.Id}").FirstOrDefaultAsync();
+            var product = await _efContext.Database.SqlQueryRaw<ProductDto>($"SELECT * FROM Products WHERE Id = {_product.Id}").FirstOrDefaultAsync();
             return product;
         }
 
