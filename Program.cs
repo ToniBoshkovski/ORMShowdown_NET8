@@ -7,7 +7,7 @@ using ORMShowdown_NET8;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<DapperContext>();
+builder.Services.AddTransient<DapperContext>();
 
 var config = new ManualConfig()
         .WithOptions(ConfigOptions.DisableOptimizationsValidator)
